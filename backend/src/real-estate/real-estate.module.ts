@@ -4,5 +4,6 @@ import {RealEstateMapper} from "./real-estate.mapper";
 
 @Module({
   providers: [RealEstateService, RealEstateMapper],
+  exports: [RealEstateService]
 })
 export class RealEstateModule {}

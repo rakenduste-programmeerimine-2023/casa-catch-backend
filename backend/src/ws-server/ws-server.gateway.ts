@@ -12,7 +12,7 @@ import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-reque
 import {WsRealEstateResponseDataModel} from "../shared/models/websocket/ws-real-estate-response-data.model";
 import {RealEstateService} from "../real-estate/real-estate.service";
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: { origin: "*" } })
 export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
   private readonly logger: Logger = new Logger(WsServerGateway.name)
 
@@ -40,16 +40,16 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
     this.connectionPoolManager.removeConnection(client)
   }
 
-  @SubscribeMessage('message')
-  handleServerHelloMessage(client: Socket): void {
-    client.emit("hello", "Server hello")
-  }
-
-  @SubscribeMessage('message')
-  handleMessage(client: Socket, payload: any): void {
-    console.log(payload)
-    client.emit("hello", "Server hello")
-  }
+  // @SubscribeMessage('message')
+  // handleServerHelloMessage(client: Socket): void {
+  //   client.emit("hello", "Server hello")
+  // }
+  //
+  // @SubscribeMessage('message')
+  // handleMessage(client: Socket, payload: any): void {
+  //   console.log(payload)
+  //   client.emit("hello", "Server hello")
+  // }
 
   // TODO definitely write documentation
   @SubscribeMessage('real-estate')
