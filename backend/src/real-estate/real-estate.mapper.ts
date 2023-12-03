@@ -1,12 +1,18 @@
 import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-request-data.interface";
-import {Injectable} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
+
+const customLogger = (info: any) => {
+  return `${info.timestamp} [${info.context}] ${info.level} [${info.line}] ${info.message}`
+}
 
 @Injectable()
 export class RealEstateMapper {
+  private readonly logger: Logger = new Logger(RealEstateMapper.name)
 
   public kinnisvara24Mapper(requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams {
     return {
-      addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
+      // addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
+      addresses: requestData.districts,
       // area_max: requestData...toString(),
       // area_min: requestData...toString(),
       deal_types: this.mapToDealTypes(requestData.propertyType),
@@ -35,7 +41,9 @@ export class RealEstateMapper {
   }
 
   // TODO docuemntation
+  // Turns out their APIs are a big pile of shit and you don't even need this...
   private mapToKinnisvara24Addresses(districts: string[]): Kinnisvara24Address {
+    this.logger.debug(districts)
     const addressKeys: string[] = this.generateAddressKeys(districts.length)
 
     const addressObjects = districts.map((district: string, index: number) => ({

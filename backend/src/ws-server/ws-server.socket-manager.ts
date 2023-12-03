@@ -14,7 +14,7 @@ export class WebsocketConnectionPoolManager {
 
   public removeConnection(client: Socket): void {
     if (!client.connected) {
-      this.logger.warn(`Client with id: ${client.id} disconnected the websocket connection, removing the client from the pool...`)
+      this.logger.log(`Client with id: ${client.id} disconnected the websocket connection, removing the client from the pool...`)
     }
     WebsocketConnectionPoolManager.connectionPool.delete(client.id)
   }
