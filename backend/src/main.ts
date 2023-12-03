@@ -8,8 +8,10 @@ async function bootstrap() {
   const configService: ConfigService = app.get(ConfigService)
   const BACKEND_PORT = configService.get('BACKEND_PORT')
   app.enableCors({
-    origin: 'http://localhost:3000',
-    credentials: true
+    origin: '*',
+    credentials: true,
+    methods: "*",
+    allowedHeaders: "*"
   })
 
   await app.listen(BACKEND_PORT, (): void => {

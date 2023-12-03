@@ -1,6 +1,7 @@
 /**
  * Represents an address with dynamic keys.
  * @interface Kinnisvara24Address
+ * @Deprecated - API works without proper formatting, hence why deprecated
  */
 interface Kinnisvara24Address {
   [key: string]: string
@@ -25,7 +26,7 @@ interface Kinnisvara24Address {
  * @property {number} page - The page number for the search results.
  */
 interface Kinnisvara24ApiSearchParams {
-  addresses: Kinnisvara24Address[]
+  addresses: string[]
   area_min?: string
   area_max?: string
   deal_types?: string[]

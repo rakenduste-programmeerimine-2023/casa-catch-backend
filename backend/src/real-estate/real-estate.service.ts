@@ -14,7 +14,9 @@ export class RealEstateService {
 
   public async getDataFromKinnisvara24(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
     const URL: string = 'https://kinnisvara24.ee/search'
+    // this.logger.debug(apiRequest)
     const requestBody: Kinnisvara24ApiSearchParams = this.createApiRequest('Kinnisvara24', apiRequest)
+    // this.logger.debug(`Kinnisvara24 search api request body: ${JSON.stringify(requestBody)}`)
     const options: RequestInit = {
       method: 'POST',
       body: JSON.stringify(requestBody),
@@ -27,6 +29,7 @@ export class RealEstateService {
       return errorMessage
     }
 
+    // this.logger.debug(`fetch response status: ${fetchRes.status}`)
     let responseBody: Kinnisvara24ApiSearchResponse | null = null;
     try {
       responseBody = await fetchRes.json()
@@ -39,7 +42,7 @@ export class RealEstateService {
     responseBody.data.forEach((property) => {
       const dataBackTOClient: WsRealEstateResponseData = {
         address: property.address.toString(),
-        imageUrl: property.images.toString(),
+        imageUrl: property.images[0].toString(),
         price: property.hind,
         propertyAreaInSquareM: property.area,
         propertyTitle: property.address.toString(),

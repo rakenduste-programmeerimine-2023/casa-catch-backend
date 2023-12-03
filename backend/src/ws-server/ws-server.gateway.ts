@@ -33,6 +33,7 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
   handleConnection(client: Socket, ...args: any[]): any {
     this.logger.log(`Socket connected: ${client.id}`)
     this.connectionPoolManager.addConnection(client)
+    this.logger.log(`Connected clients: ${this.connectionPoolManager.getConnectionPoolSze()}`)
   }
 
   handleDisconnect(client: Socket): any {
@@ -56,7 +57,6 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
   public handleRealEstateRequest(client: Socket, payload: WsRealEstateRequestData): void {
     // Payload is sent to services
     this.logger.log(`received a request for data: ${payload}`)
-    // ... TODO send data for processing ...
     this.realEstateService.getDataFromKinnisvara24(payload, client)
     client.emit("real-estate-json-data-response", WsRealEstateResponseDataModel)
   }
