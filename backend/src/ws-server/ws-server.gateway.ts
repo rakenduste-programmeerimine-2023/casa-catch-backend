@@ -57,6 +57,7 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
     // Payload is sent to services
     this.logger.log(`received a request for data: ${JSON.stringify(payload)}, client: ${client.id}`)
     this.realEstateService.getDataFromKinnisvara24(payload, client)
+    this.realEstateService.getDataFromRendin(payload, client)
   }
 
   @SubscribeMessage('test-manager')

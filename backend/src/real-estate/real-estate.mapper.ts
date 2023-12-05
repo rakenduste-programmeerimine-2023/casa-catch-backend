@@ -34,18 +34,23 @@ export class RealEstateMapper {
 
   public rendinMapper(requestData: WsRealEstateRequestData): RendinApiSearchParams {
     return {
-      city: "Tallinn",
-      country: "EE",
-      districts: this.mapToRendinDistricts(requestData.districts),
-      priceMax: requestData.maxPrice,
-      priceMin: requestData.minPrice,
-      roomsMax: requestData.maxRooms,
-      roomsMin: requestData.minRooms
+      data: {
+        city: "Tallinn",
+        country: "EE",
+        districts: this.mapToRendinDistricts(requestData.districts),
+        priceMax: requestData.maxPrice,
+        priceMin: requestData.minPrice,
+        roomsMax: requestData.maxRooms,
+        roomsMin: requestData.minRooms
+      }
     }
   }
 
-  // TODO docuemntation
-  // Turns out their API is a big pile of shit and you don't even need this...
+  /**
+   * @Deprecated Turns out their API is a big pile of shit, and you don't even need this...
+   * @param {string[]} districts - An array of districts (string) provided by the client
+   * @private
+   */
   private mapToKinnisvara24Addresses(districts: string[]): Kinnisvara24Address {
     this.logger.debug(districts)
     const addressKeys: string[] = this.generateAddressKeys(districts.length)

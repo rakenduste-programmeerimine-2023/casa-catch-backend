@@ -35,9 +35,8 @@ export class RealEstateService {
     }
 
     // irl it would need a data pipeline to filter through duplicate data but as of now this should do the job
-    // TODO add the url property as well
     responseBody.data.forEach((property) => {
-      const dataBackTOClient: WsRealEstateResponseData = {
+      const dataBackToClient: WsRealEstateResponseData = {
         address: JSON.stringify(property.address.city_country),
         imageUrl: JSON.stringify(property.images[0].url_small),
         price: property.hind,
@@ -46,7 +45,43 @@ export class RealEstateService {
         rooms: property.rooms,
         url: property.permalink
       }
-      client.emit('real-estate-json-data-response', dataBackTOClient)
+      client.emit('real-estate-json-data-response', dataBackToClient)
+    })
+  }
+
+  public async getDataFromRendin(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
+    const URL: string = 'https://europe-west1-rendin-production.cloudfunctions.net/getSearchApartments'
+    const requestBody: RendinApiSearchParams = this.createApiRequest('Rendin', apiRequest)
+    const options: RequestInit = {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: { "Content-type": "application/json; charset=UTF-8" }
+    }
+
+    const fetchRes: Response = await this.fetchDataFromAPI(URL, options)
+    if (!fetchRes.ok) {
+      const errorMessage: string = await fetchRes.text()
+      return errorMessage
+    }
+
+    let responseBody: RendinApiSearchResponse | null = null
+    try {
+      responseBody = await fetchRes.json()
+    } catch (error) {
+      return `An error occurred when parsing the response: {RendinApiSearchResponse} body, error: ${error}`
+    }
+
+    responseBody.result.foundApartments.forEach((apartment) => {
+      const dataBackToClient: WsRealEstateResponseData = {
+        address: apartment.city,
+        imageUrl: apartment.image,
+        price: apartment.price,
+        propertyAreaInSquareM: apartment.objectArea,
+        propertyTitle: JSON.stringify(`${apartment.address},${apartment.city}`),
+        rooms: apartment.rooms,
+        url: apartment.link
+      }
+      client.emit('real-estate-json-data-response', dataBackToClient)
     })
   }
 
