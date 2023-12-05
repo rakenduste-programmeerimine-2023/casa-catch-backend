@@ -5,4 +5,5 @@ export interface WsRealEstateResponseData {
   propertyAreaInSquareM: number
   address: string
   rooms: number
+  url?: string
 }

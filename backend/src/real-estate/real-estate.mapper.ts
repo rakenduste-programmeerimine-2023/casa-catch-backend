@@ -5,6 +5,9 @@ const customLogger = (info: any) => {
   return `${info.timestamp} [${info.context}] ${info.level} [${info.line}] ${info.message}`
 }
 
+/**
+ * This mapper is responsible for mapping the CLIENT's request data to the APIs request data
+ */
 @Injectable()
 export class RealEstateMapper {
   private readonly logger: Logger = new Logger(RealEstateMapper.name)
@@ -23,6 +26,7 @@ export class RealEstateMapper {
       price_min: requestData.minPrice,
       rooms_max: requestData.maxRooms,
       rooms_min: requestData.minRooms,
+      // url: requestData.url,
       sort_by: 'price',
       sort_order: 'asc',
     }
@@ -41,7 +45,7 @@ export class RealEstateMapper {
   }
 
   // TODO docuemntation
-  // Turns out their APIs are a big pile of shit and you don't even need this...
+  // Turns out their API is a big pile of shit and you don't even need this...
   private mapToKinnisvara24Addresses(districts: string[]): Kinnisvara24Address {
     this.logger.debug(districts)
     const addressKeys: string[] = this.generateAddressKeys(districts.length)

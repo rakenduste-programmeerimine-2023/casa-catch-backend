@@ -9,7 +9,6 @@ import { Socket } from 'socket.io'
 import {Logger} from "@nestjs/common";
 import {WebsocketConnectionPoolManager} from "./ws-server.socket-manager";
 import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-request-data.interface";
-import {WsRealEstateResponseDataModel} from "../shared/models/websocket/ws-real-estate-response-data.model";
 import {RealEstateService} from "../real-estate/real-estate.service";
 
 @WebSocketGateway({ cors: { origin: "*" } })
@@ -56,9 +55,8 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
   @SubscribeMessage('real-estate')
   public handleRealEstateRequest(client: Socket, payload: WsRealEstateRequestData): void {
     // Payload is sent to services
-    this.logger.log(`received a request for data: ${payload}`)
+    this.logger.log(`received a request for data: ${JSON.stringify(payload)}, client: ${client.id}`)
     this.realEstateService.getDataFromKinnisvara24(payload, client)
-    client.emit("real-estate-json-data-response", WsRealEstateResponseDataModel)
   }
 
   @SubscribeMessage('test-manager')
