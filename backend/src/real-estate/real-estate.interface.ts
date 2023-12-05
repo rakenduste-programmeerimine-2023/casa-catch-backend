@@ -142,8 +142,10 @@ type propertyArea = number
  *
  * @property {Array} data - An array of property data objects containing details of each property in the search result.
  *   @property {number} hind - The price of the property.
+ *   @property {string} permalink - Permanent link for the listing.
  *   @property {Object} address - Address details of the property.
  *     @property {propertyTitle} short_address - A short version of the property address used for display.
+ *     @property {string} city_country - Short description of properties' city and country.
  *   @property {Array} images - An array of images for the property, including URLs for medium and small sizes.
  *     @property {string} url_medium - URL for the medium-sized image of the property.
  *     @property {string} url_small - URL for the small-sized image of the property.
@@ -159,8 +161,10 @@ type propertyArea = number
  *   data: [
  *     {
  *       hind: 500,
+ *       permalink: "https://kinnisvara24.ee/korter-yyr-tallinn/240720692",
  *       address: {
  *         short_address: "Example Street 12, Põhja-Tallinn",
+ *         city_country: "Narva linn, Ida-Viru maakond"
  *       },
  *       images: [
  *         {
@@ -183,8 +187,10 @@ type propertyArea = number
 interface Kinnisvara24ApiSearchResponse {
   data: {
     hind: number
+    permalink: string
     address: {
       short_address: propertyTitle
+      city_country: string
     }
     images: {
       url_medium: string

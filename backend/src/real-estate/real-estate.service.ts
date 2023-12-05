@@ -14,9 +14,7 @@ export class RealEstateService {
 
   public async getDataFromKinnisvara24(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
     const URL: string = 'https://kinnisvara24.ee/search'
-    // this.logger.debug(apiRequest)
     const requestBody: Kinnisvara24ApiSearchParams = this.createApiRequest('Kinnisvara24', apiRequest)
-    // this.logger.debug(`Kinnisvara24 search api request body: ${JSON.stringify(requestBody)}`)
     const options: RequestInit = {
       method: 'POST',
       body: JSON.stringify(requestBody),
@@ -29,7 +27,6 @@ export class RealEstateService {
       return errorMessage
     }
 
-    // this.logger.debug(`fetch response status: ${fetchRes.status}`)
     let responseBody: Kinnisvara24ApiSearchResponse | null = null;
     try {
       responseBody = await fetchRes.json()
@@ -41,12 +38,13 @@ export class RealEstateService {
     // TODO add the url property as well
     responseBody.data.forEach((property) => {
       const dataBackTOClient: WsRealEstateResponseData = {
-        address: property.address.toString(),
-        imageUrl: property.images[0].toString(),
+        address: JSON.stringify(property.address.city_country),
+        imageUrl: JSON.stringify(property.images[0].url_small),
         price: property.hind,
         propertyAreaInSquareM: property.area,
-        propertyTitle: property.address.toString(),
-        rooms: property.rooms
+        propertyTitle: JSON.stringify(property.address.short_address),
+        rooms: property.rooms,
+        url: property.permalink
       }
       client.emit('real-estate-json-data-response', dataBackTOClient)
     })
@@ -62,7 +60,7 @@ export class RealEstateService {
 
   // Overloading the `createApiRequest` method, SO link: https://stackoverflow.com/a/43959949
   private createApiRequest(apiType: "Kinnisvara24", requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams
-  // private createApiRequest(apiType: "Rendin", requestData: WsRealEstateRequestData): RendinApiSearchParams
+  private createApiRequest(apiType: "Rendin", requestData: WsRealEstateRequestData): RendinApiSearchParams
   // private createApiRequest(apiType: "City24", requestData: WsRealEstateRequestData): City24SearchParameters
   private createApiRequest(apiType: string, requestData: WsRealEstateRequestData): apiRequestOptions {
     switch (apiType) {

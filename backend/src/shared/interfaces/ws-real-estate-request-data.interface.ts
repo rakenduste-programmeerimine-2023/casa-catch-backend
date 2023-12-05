@@ -13,4 +13,5 @@ export interface WsRealEstateRequestData {
    * "object_types": ["apartment"]
    */
   objectTypes: string[]
+  url?: string
 }
