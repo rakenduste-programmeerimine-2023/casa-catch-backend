@@ -58,13 +58,15 @@ type RendinDistricts = "Põhja-Tallinn" | "Haabersti" | "Kesklinn" | "Kristiine"
  * @property {string} city - The city name.
  */
 interface RendinApiSearchParams {
-  priceMin?: number
-  priceMax?: number
-  roomsMin?: number
-  roomsMax?: number
-  districts: RendinDistricts[]
-  country: "EE"
-  city: "Tallinn"
+  data: {
+    priceMin?: number
+    priceMax?: number
+    roomsMin?: number
+    roomsMax?: number
+    districts: RendinDistricts[]
+    country: "EE"
+    city: "Tallinn"
+  }
 }
 
 /**
@@ -211,10 +213,11 @@ interface Kinnisvara24ApiSearchResponse {
  * @property {Object} result - Information about the search result.
  *   @property {number} count - The count of found apartments.
  *   @property {Array} foundApartments - An array of found apartments.
- *     @property {Array} images - List of other property images.
+ *     @property {Array} images - List of other property images. The first image {image[0]} is also the main image.
  *     @property {string} image - The main image of the property.
  *     @property {number} price - The price of the property.
  *     @property {propertyArea} objectArea - The area of the property.
+ *     @property {string} link - The url for the listing (not permanent)
  *     @property {number} rooms - The number of rooms in the property.
  *     @property {string} city - The city of the property.
  *     @property {string} address - The address of the property.
@@ -226,13 +229,14 @@ interface Kinnisvara24ApiSearchResponse {
  *     foundApartments: [
  *       {
  *         images: [
- *           "image1.jpg",
+ *           "mainImage.jpg",
  *           "image2.jpg",
  *           // ... additional images
  *         ],
  *         image: "mainImage.jpg",
  *         price: 500,
  *         objectArea: 75.5,
+ *         link: "https://rendin.ee/invite/form/2V1W",
  *         rooms: 2,
  *         // [address] + "," + [city] === propertyTitle
  *         city: "Tallinn",
@@ -247,12 +251,13 @@ interface RendinApiSearchResponse {
   result: {
     count: 90
     foundApartments: {
-      // List of other property images
+      // List of other property images. The first image {image[0]} is also the main image.
       images: string[]
       // The main image
       image: string
       price: number
       objectArea: propertyArea
+      link: string
       rooms: number
       // [address] + "," + [city] === propertyTitle
       city: string
