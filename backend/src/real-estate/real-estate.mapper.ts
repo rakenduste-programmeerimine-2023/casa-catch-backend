@@ -1,17 +1,27 @@
 import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-request-data.interface";
 import {Injectable, Logger} from "@nestjs/common";
 
+// TODO create a project based logger
 const customLogger = (info: any) => {
   return `${info.timestamp} [${info.context}] ${info.level} [${info.line}] ${info.message}`
 }
 
 /**
- * This mapper is responsible for mapping the CLIENT's request data to the APIs request data
+ * Mapper service for transforming CLIENT's request data to API's request data.
+ *
+ * @class RealEstateMapper
  */
 @Injectable()
 export class RealEstateMapper {
   private readonly logger: Logger = new Logger(RealEstateMapper.name)
 
+  /**
+   * Maps the CLIENT's request data to the Kinnisvara24 APIs request data.
+   *
+   * @param {WsRealEstateRequestData} requestData - The CLIENT's request data.
+   * @returns {Kinnisvara24ApiSearchParams} - The Kinnisvara24 APIs request data object.
+   * @memberof RealEstateMapper
+   */
   public kinnisvara24Mapper(requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams {
     return {
       // addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
@@ -32,6 +42,13 @@ export class RealEstateMapper {
     }
   }
 
+  /**
+   * Maps the CLIENT's request data to the Rendin APIs request data.
+   *
+   * @param {WsRealEstateRequestData} requestData - The CLIENT's request data.
+   * @returns {RendinApiSearchParams} - The Rendin APIs request data object.
+   * @memberof RealEstateMapper
+   */
   public rendinMapper(requestData: WsRealEstateRequestData): RendinApiSearchParams {
     return {
       data: {
@@ -62,6 +79,22 @@ export class RealEstateMapper {
     return Object.assign({}, ...addressObjects)
   }
 
+  /**
+   * Generates address keys for mapping CLIENT's districts to Kinnisvara24 addresses.
+   * @deprecated no actual need for this helper method at the moment.
+   *
+   * @example
+   * Sample response:
+   * "A1",
+   * "A2",
+   * "A3",
+   * "A4",
+   *
+   * @param {number} count - The number of address keys to generate.
+   * @returns {string[]} - An array of generated address keys.
+   * @memberof RealEstateMapper
+   * @private
+   */
   private generateAddressKeys(count: number): string[] {
     const letters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     const addressKeys: string[] = []
@@ -79,6 +112,16 @@ export class RealEstateMapper {
     return addressKeys
   }
 
+  /**
+   * Maps CLIENT's districts to Rendin districts using a predefined mapping.
+   *
+   * @param {string[]} clientDistricts - An array of CLIENT's districts.
+   * @returns {RendinDistricts[]} - An array of Rendin districts.
+   * @example
+   * // maps "Kalamaja" to "Põhja-Tallinn", because of Rendin APIs accepted districts
+   * @memberof RealEstateMapper
+   * @private
+   */
   private mapToRendinDistricts(clientDistricts: string[]): RendinDistricts[] {
     const districtMapping: Record<string, RendinDistricts> = {
       "Kalamaja": "Põhja-Tallinn",
@@ -90,6 +133,16 @@ export class RealEstateMapper {
   }
 
 
+  /**
+   * Maps CLIENT's property type to Kinnisvara24 deal types.
+   *
+   * @param {'rent' | 'sale' | undefined} propertyType - The CLIENT's property type.
+   * @returns {string[]} - An array of Kinnisvara24 deal types.
+   * @example
+   * // returns a list, i.e. ['rent']; ['rent', 'sale']
+   * @memberof RealEstateMapper
+   * @private
+   */
   private mapToDealTypes(propertyType: 'rent' | 'sale' | undefined): string[] {
     if (propertyType === 'rent') {
       return ['rent'];
@@ -101,7 +154,16 @@ export class RealEstateMapper {
   }
 
   /**
-   * @Deprecated No {objectType} is allowed to be provided atm
+   * @deprecated Currently not used as only apartment types are allowed.
+   *
+   * Maps CLIENT's object type to Kinnisvara24 object types.
+   *
+   * @param {'apartment' | 'house' | undefined} objectType - The CLIENT's object type.
+   * @returns {string[]} - An array of Kinnisvara24 object types.
+   * @example
+   * // returns a list, i.e. ['apartment']; ['apartment', 'house']
+   * @memberof RealEstateMapper
+   * @private
    */
   private mapToObjectTypes(objectType: 'apartment' | 'house' | undefined): string[] {
     if (objectType === 'apartment') {
