@@ -11,6 +11,15 @@ import {WebsocketConnectionPoolManager} from "./ws-server.socket-manager";
 import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-request-data.interface";
 import {RealEstateService} from "../real-estate/real-estate.service";
 
+
+/**
+ * WebSocket Gateway for handling websocket connections, mainly real-estate API data
+ *
+ * @class WsServerGateway
+ * @implements {OnGatewayConnection}
+ * @implements {OnGatewayDisconnect}
+ * @implements {OnGatewayInit}
+ */
 @WebSocketGateway({ cors: { origin: "*" } })
 export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
   private readonly logger: Logger = new Logger(WsServerGateway.name)
@@ -51,7 +60,16 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
   //   client.emit("hello", "Server hello")
   // }
 
-  // TODO definitely write documentation
+  /**
+   * Handles a real estate-related WebSocket request. Subscribes to a message "real-estate".
+   * As soon as the client creates a connection with a websocket the external calls to the real estate APIs are made
+   * concurrently.
+   *
+   * @param {Socket} client - The WebSocket client.
+   * @param {WsRealEstateRequestData} payload - The payload containing real estate request data from client.
+   * @returns {void}
+   * @memberof WsServerGateway
+   */
   @SubscribeMessage('real-estate')
   public handleRealEstateRequest(client: Socket, payload: WsRealEstateRequestData): void {
     // Payload is sent to services

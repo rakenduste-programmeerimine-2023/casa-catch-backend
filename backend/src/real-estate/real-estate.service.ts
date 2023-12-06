@@ -6,12 +6,26 @@ import {Socket} from "socket.io";
 
 type apiRequestOptions = Kinnisvara24ApiSearchParams | RendinApiSearchParams | City24SearchParameters
 
+/**
+ * Service for handling real estate-related operations: API calls, data manipulation and sending the data
+ * back to the client via websocket.
+ *
+ * @class RealEstateService
+ */
 @Injectable()
 export class RealEstateService {
   private readonly logger: Logger = new Logger(RealEstateService.name)
 
   constructor(private readonly realEstateMapper: RealEstateMapper) {}
 
+  /**
+   * Retrieves real estate data from the Kinnisvara24 API.
+   *
+   * @param {WsRealEstateRequestData} apiRequest - Request data for the real estate API (sent by the client).
+   * @param {Socket} client - The WebSocket client instance.
+   * @returns {Promise<WsRealEstateResponseData | string>} - A promise that resolves to real estate data or an error message.
+   * @memberof RealEstateService
+   */
   public async getDataFromKinnisvara24(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
     const URL: string = 'https://kinnisvara24.ee/search'
     const requestBody: Kinnisvara24ApiSearchParams = this.createApiRequest('Kinnisvara24', apiRequest)
@@ -49,6 +63,14 @@ export class RealEstateService {
     })
   }
 
+  /**
+   * Retrieves real estate data from the Rendin API.
+   *
+   * @param {WsRealEstateRequestData} apiRequest - Request data for the real estate API (sent by the client).
+   * @param {Socket} client - The WebSocket client instance.
+   * @returns {Promise<WsRealEstateResponseData | string>} - A promise that resolves to real estate data or an error message.
+   * @memberof RealEstateService
+   */
   public async getDataFromRendin(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
     const URL: string = 'https://europe-west1-rendin-production.cloudfunctions.net/getSearchApartments'
     const requestBody: RendinApiSearchParams = this.createApiRequest('Rendin', apiRequest)
@@ -85,7 +107,16 @@ export class RealEstateService {
     })
   }
 
-  private async fetchDataFromAPI(url: string, options: {}): Promise<Response> {
+  /**
+   * Fetches data from a given API using the provided URL and request options.
+   *
+   * @private
+   * @param {string} url - The URL of the API.
+   * @param {RequestInit} options - The request options.
+   * @returns {Promise<Response>} - A promise that resolves to the API response.
+   * @memberof RealEstateService
+   */
+  private async fetchDataFromAPI(url: string, options: RequestInit): Promise<Response> {
     try {
       return await fetch(url, options)
     } catch (error) {
@@ -93,7 +124,18 @@ export class RealEstateService {
     }
   }
 
-  // Overloading the `createApiRequest` method, SO link: https://stackoverflow.com/a/43959949
+  /**
+   * Creates an API request object based on the specified API type and request data. Method is overridden
+   * multiple times in order to respond to different API types
+   *
+   * @private
+   * @param {"Kinnisvara24" | "Rendin"} apiType - The type of the real estate API.
+   * @param {WsRealEstateRequestData} requestData - Request data for the real estate API.
+   * @returns {Kinnisvara24ApiSearchParams | RendinApiSearchParams} - The API request parameters.
+   * @throws {Error} - Throws an error if the API type is not supported.
+   * @memberof RealEstateService
+   * @link https://stackoverflow.com/a/43959949
+   */
   private createApiRequest(apiType: "Kinnisvara24", requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams
   private createApiRequest(apiType: "Rendin", requestData: WsRealEstateRequestData): RendinApiSearchParams
   // private createApiRequest(apiType: "City24", requestData: WsRealEstateRequestData): City24SearchParameters

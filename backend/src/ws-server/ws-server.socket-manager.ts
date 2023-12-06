@@ -1,6 +1,11 @@
 import {Injectable, Logger} from "@nestjs/common";
 import {Socket} from "socket.io";
 
+/**
+ * Represents the websocket connection pool manager,
+ * which allows various use cases for the connected websockets.
+ * @class WebsocketConnectionPoolManager
+ */
 @Injectable()
 export class WebsocketConnectionPoolManager {
 
@@ -31,7 +36,7 @@ export class WebsocketConnectionPoolManager {
   /**
    * Get the entire connection pool Map<string, Socket> object
    * @method getConnectionPool
-   * @returns {Map<string, Socket>}
+   * @returns Map<string, Socket>
    */
   public getConnectionPool(): Map<string, Socket> {
     return WebsocketConnectionPoolManager.connectionPool
