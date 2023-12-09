@@ -23,22 +23,20 @@ export class RealEstateMapper {
    * @memberof RealEstateMapper
    */
   public kinnisvara24Mapper(requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams {
+    const districtsWithTallinn: string[] = ['Tallinn', 'Harju maakond', ...requestData.districts]
+
     return {
       // addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
-      addresses: requestData.districts,
-      // area_max: requestData...toString(),
-      // area_min: requestData...toString(),
+      addresses: districtsWithTallinn,
       deal_types: this.mapToDealTypes(requestData.propertyType),
       from_owner: requestData.fromOwner || false,
-      // object_types: this.mapToObjectTypes(requestData.propertyType),
-      // page: 1,
+      object_types: ["apartment"],
       price_max: requestData.maxPrice,
       price_min: requestData.minPrice,
       rooms_max: requestData.maxRooms,
       rooms_min: requestData.minRooms,
-      // url: requestData.url,
-      sort_by: 'price',
-      sort_order: 'asc',
+      sort_by: 'relevance',
+      sort_order: 'desc',
     }
   }
 

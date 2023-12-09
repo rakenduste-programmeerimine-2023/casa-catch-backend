@@ -49,17 +49,6 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
     this.connectionPoolManager.removeConnection(client)
   }
 
-  // @SubscribeMessage('message')
-  // handleServerHelloMessage(client: Socket): void {
-  //   client.emit("hello", "Server hello")
-  // }
-  //
-  // @SubscribeMessage('message')
-  // handleMessage(client: Socket, payload: any): void {
-  //   console.log(payload)
-  //   client.emit("hello", "Server hello")
-  // }
-
   /**
    * Handles a real estate-related WebSocket request. Subscribes to a message "real-estate".
    * As soon as the client creates a connection with a websocket the external calls to the real estate APIs are made
@@ -71,11 +60,23 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
    * @memberof WsServerGateway
    */
   @SubscribeMessage('real-estate')
-  public handleRealEstateRequest(client: Socket, payload: WsRealEstateRequestData): void {
+  public async handleRealEstateRequest(client: Socket, payload: WsRealEstateRequestData): Promise<void> {
     // Payload is sent to services
     this.logger.log(`received a request for data: ${JSON.stringify(payload)}, client: ${client.id}`)
-    this.realEstateService.getDataFromKinnisvara24(payload, client)
-    this.realEstateService.getDataFromRendin(payload, client)
+    try {
+      const [kinnisvara24Data, rendinData] = await Promise.all([
+        this.realEstateService.getDataFromRendin(payload, client),
+        this.realEstateService.getDataFromKinnisvara24(payload, client),
+      ])
+
+      // String response indicates an error
+      if (typeof kinnisvara24Data === 'string') client.emit('real-estate-json-data-response', kinnisvara24Data)
+      if (typeof rendinData === 'string') client.emit('real-estate-json-data-response', rendinData)
+    } catch (error) {
+      const errorMessage: string = `There was an error with one of the concurrent api request, e: ${error}`
+      client.emit('real-estate-json-data-response', errorMessage)
+    }
+    client.disconnect(true)
   }
 
   @SubscribeMessage('test-manager')
