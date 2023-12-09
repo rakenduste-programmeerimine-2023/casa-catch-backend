@@ -29,13 +29,18 @@ export class RealEstateService {
   public async getDataFromKinnisvara24(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
     const URL: string = 'https://kinnisvara24.ee/search'
     const requestBody: Kinnisvara24ApiSearchParams = this.createApiRequest('Kinnisvara24', apiRequest)
+    this.logger.log(requestBody)
     const options: RequestInit = {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: { "Content-type": "application/json; charset=UTF-8" }
     }
 
+    // const startTime = Date.now()
     const fetchRes: Response = await this.fetchDataFromAPI(URL, options)
+    // await new Promise(resolve => setTimeout(resolve, 2000))
+    // const endTime = Date.now()
+    // this.logger.debug(`Kinnisvara24 request took ${endTime - startTime} milliseconds`);
     if (!fetchRes.ok) {
       const errorMessage: string = await fetchRes.text()
       return errorMessage
@@ -80,7 +85,10 @@ export class RealEstateService {
       headers: { "Content-type": "application/json; charset=UTF-8" }
     }
 
+    // const startTime = Date.now()
     const fetchRes: Response = await this.fetchDataFromAPI(URL, options)
+    // const endTime = Date.now()
+    // this.logger.debug(`Rendin request took ${endTime - startTime} milliseconds`);
     if (!fetchRes.ok) {
       const errorMessage: string = await fetchRes.text()
       return errorMessage
