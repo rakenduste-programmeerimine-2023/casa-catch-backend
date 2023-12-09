@@ -45,6 +45,7 @@ export class RealEstateService {
       const errorMessage: string = await fetchRes.text()
       return errorMessage
     }
+    this.logger.debug(fetchRes.status)
 
     let responseBody: Kinnisvara24ApiSearchResponse | null = null;
     try {
@@ -52,6 +53,7 @@ export class RealEstateService {
     } catch (error) {
       return `An error occurred when parsing the response: {Kinnisvara24ApiSearchResponse} body, error: ${error}`
     }
+    // this.logger.debug(responseBody)
 
     // irl it would need a data pipeline to filter through duplicate data but as of now this should do the job
     responseBody.data.forEach((property) => {

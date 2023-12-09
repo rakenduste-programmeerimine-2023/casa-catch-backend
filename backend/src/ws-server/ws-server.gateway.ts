@@ -64,14 +64,14 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
     // Payload is sent to services
     this.logger.log(`received a request for data: ${JSON.stringify(payload)}, client: ${client.id}`)
     try {
-      const [kinnisvara24Data, rendinData] = await Promise.all([
-        this.realEstateService.getDataFromRendin(payload, client),
+      const [kinnisvara24Data] = await Promise.all([
+        // this.realEstateService.getDataFromRendin(payload, client),
         this.realEstateService.getDataFromKinnisvara24(payload, client),
       ])
 
       // String response indicates an error
       if (typeof kinnisvara24Data === 'string') client.emit('real-estate-json-data-response', kinnisvara24Data)
-      if (typeof rendinData === 'string') client.emit('real-estate-json-data-response', rendinData)
+      // if (typeof rendinData === 'string') client.emit('real-estate-json-data-response', rendinData)
     } catch (error) {
       const errorMessage: string = `There was an error with one of the concurrent api request, e: ${error}`
       client.emit('real-estate-json-data-response', errorMessage)

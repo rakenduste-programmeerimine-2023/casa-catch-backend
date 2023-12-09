@@ -22,24 +22,95 @@ export class RealEstateMapper {
    * @returns {Kinnisvara24ApiSearchParams} - The Kinnisvara24 APIs request data object.
    * @memberof RealEstateMapper
    */
-  public kinnisvara24Mapper(requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams {
-    const districtsWithTallinn: string[] = ['Tallinn', 'Harju maakond', ...requestData.districts]
-    const districtsWithTallinn2: string[] = requestData.districts.map(district => `Tallinn, Harju maakond, ${district}`)
+  public kinnisvara24Mapper(requestData: WsRealEstateRequestData): any {
+    const districtsWithTallinn: string[] = ['Tallinn', 'Harju maakond', ...requestData.districts];
+    const districtsWithTallinn2: string[] = requestData.districts.map(district => `Tallinn, Harju maakond, ${district}`);
 
     return {
-      addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
-      // addresses: districtsWithTallinn2,
-      deal_types: this.mapToDealTypes(requestData.propertyType),
-      from_owner: requestData.fromOwner || false,
-      object_types: ["apartment"],
-      price_max: requestData.maxPrice,
-      price_min: requestData.minPrice,
-      rooms_max: requestData.maxRooms,
-      rooms_min: requestData.minRooms,
+      hash: null,
+      // This needs to be A4 in order to work, no idea why...
+      addresses: [
+        {
+          'A1': 'Harju maakond',
+          'A4': 'Kadriorg',
+        },
+      ],
+      area_min: '',
+      area_max: '',
+      land_area_min: '',
+      land_area_max: '',
+      around_point: null,
+      bounds: [],
+      broker_id: '',
+      bureau_id: null,
+      build_year_min: '',
+      build_year_max: '',
+      client_day_date_max: '',
+      client_day_date_min: '',
+      comforts: [],
+      commercial_types: [],
+      deal_types: ['rent'],
+      developments_only: false,
+      energy_classes: [],
+      exclusives: false,
+      uniques: false,
+      extras: [],
+      floor_min: '',
+      floor_max: '',
+      from_owner: false,
+      with_detail_planning_only: false,
+      with_building_permit_only: false,
+      with_360_tour_only: false,
+      with_video_only: false,
+      intended_uses: [],
+      keywords: [],
+      materials: [],
+      object_types: ['apartment'],
+      price_max: 600,
+      price_min: 200,
+      price_per_m2_max: '',
+      price_per_m2_min: '',
+      land_price_per_m2_max: '',
+      land_price_per_m2_min: '',
+      water_supplies: [],
+      heating_types: [],
+      energy_sources: [],
+      rooms_max: 3,
+      rooms_min: 1,
+      sewage_types: [],
       sort_by: 'relevance',
       sort_order: 'desc',
-    }
+      page: 1,
+      utility_join_fees_paid: false,
+      has_repairs_canal: false,
+      is_development_lot: false,
+      is_top_floor: false,
+      has_water_border: false,
+      pets_allowed: false,
+      with_usage_permit: false,
+      has_client_day: false,
+      free: false,
+      amount: '',
+      rooms: '',
+      period: '',
+      has_furniture: '',
+      has_washing: false,
+      are_pets_allowed: false,
+      show_deactivated: false,
+      price_without_utilities: false,
+      has_kitchen: false,
+      has_job_possibility: false,
+      additional: [],
+      house_part_types: [],
+      conditions: [],
+      neighbours: [],
+      road_conditions: [],
+      address: [],
+    };
   }
+
+
+
 
   /**
    * Maps the CLIENT's request data to the Rendin APIs request data.

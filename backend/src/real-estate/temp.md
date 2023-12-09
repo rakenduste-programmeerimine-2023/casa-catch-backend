@@ -1,4 +1,7 @@
 # Testing
+## EDIT
+SO it seems that the districts array has some kind of business logic unknown to me and currently leaving this task as is.
+
 This is the current sample request for Kinnisvara24
 
 ```json
@@ -30,3 +33,4 @@ This is the current sample request for Kinnisvara24
 }
 
 ```
+
