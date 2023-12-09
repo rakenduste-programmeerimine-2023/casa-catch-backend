@@ -24,10 +24,11 @@ export class RealEstateMapper {
    */
   public kinnisvara24Mapper(requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams {
     const districtsWithTallinn: string[] = ['Tallinn', 'Harju maakond', ...requestData.districts]
+    const districtsWithTallinn2: string[] = requestData.districts.map(district => `Tallinn, Harju maakond, ${district}`)
 
     return {
-      // addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
-      addresses: districtsWithTallinn,
+      addresses: [this.mapToKinnisvara24Addresses(requestData.districts)],
+      // addresses: districtsWithTallinn2,
       deal_types: this.mapToDealTypes(requestData.propertyType),
       from_owner: requestData.fromOwner || false,
       object_types: ["apartment"],
@@ -66,15 +67,17 @@ export class RealEstateMapper {
    * @param {string[]} districts - An array of districts (string) provided by the client
    * @private
    */
-  private mapToKinnisvara24Addresses(districts: string[]): Kinnisvara24Address {
-    this.logger.debug(districts)
-    const addressKeys: string[] = this.generateAddressKeys(districts.length)
+  private mapToKinnisvara24Addresses(districts: string[]): Record<string, string> {
+    this.logger.debug(districts);
+    const addressKeys: string[] = this.generateAddressKeys(districts.length * 2);
 
-    const addressObjects = districts.map((district: string, index: number) => ({
-      [addressKeys[index]]: district,
-    }));
-
-    return Object.assign({}, ...addressObjects)
+    return addressKeys.reduce((acc, key, index) => {
+      const cityAndCounty = index % 2 === 0 ? 'Harju maakond' : 'Tallinn';
+      const districtIndex = Math.floor(index / 2);
+      const district = districts[districtIndex];
+      acc[key] = index % 2 === 0 ? cityAndCounty : district;
+      return acc;
+    }, {});
   }
 
   /**

@@ -26,7 +26,7 @@ interface Kinnisvara24Address {
  * @property {number} page - The page number for the search results.
  */
 interface Kinnisvara24ApiSearchParams {
-  addresses: string[]
+  addresses: any
   area_min?: string
   area_max?: string
   deal_types?: string[]

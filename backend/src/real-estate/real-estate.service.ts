@@ -29,7 +29,7 @@ export class RealEstateService {
   public async getDataFromKinnisvara24(apiRequest: WsRealEstateRequestData, client: Socket): Promise<WsRealEstateResponseData | string> {
     const URL: string = 'https://kinnisvara24.ee/search'
     const requestBody: Kinnisvara24ApiSearchParams = this.createApiRequest('Kinnisvara24', apiRequest)
-    this.logger.log(requestBody)
+    this.logger.debug(requestBody)
     const options: RequestInit = {
       method: 'POST',
       body: JSON.stringify(requestBody),
