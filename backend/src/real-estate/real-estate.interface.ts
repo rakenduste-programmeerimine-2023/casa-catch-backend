@@ -72,25 +72,31 @@ interface RendinApiSearchParams {
 /**
  * Represents the city codes used in the City24SearchParameters interface for making API calls to City24.
  * @interface City24CityCodes
- * @property {number} 2670 - City code for Nõmme linnaosa.
- * @property {number} 3039 - City code for Pirita linnaosa.
  * @property {number} 540 - City code for Haabersti linnaosa.
+ * @property {number} 64717 - City code for Kadriorg linnaosa.
  * @property {number} 1240 - City code for Kesklinna linnaosa.
+ * @property {number} 1535 - City code for Kristiine linnaosa.
  * @property {number} 1897 - City code for Lasnamäe linnaosa.
  * @property {number} 2413 - City code for Mustamäe linnaosa.
+ * @property {number} 2670 - City code for Nõmme linnaosa.
+ * @property {number} 3039 - City code for Pirita linnaosa.
  * @property {number} 3166 - City code for Põhja-Tallinna linnaosa.
+ * @property {number} 64718 - City code for Vanalinn.
  *
  * These city codes are used in the address[city][] parameter when making API calls to City24.
  * They represent different city districts within Tallinn.
  */
 interface City24CityCodes {
-  2670: "Nõmme linnaosa";
-  3039: "Pirita linnaosa";
-  540: "Haabersti linnaosa";
-  1240: "Kesklinna linnaosa";
-  1897: "Lasnamäe linnaosa";
-  2413: "Mustamäe linnaosa";
-  3166: "Põhja-Tallinna linnaosa";
+  540: "Haabersti"
+  64717: "Kadriorg"
+  1240: "Kesklinn"
+  1535: "Kristiine"
+  1897: "Lasnamäe"
+  2413: "Mustamäe"
+  2670: "Nõmme"
+  3039: "Pirita"
+  3166: "Põhja-Tallinn"
+  64718: "Vanalinn"
 }
 
 
@@ -102,14 +108,16 @@ interface City24CityCodes {
  * @property {string} tsType - The type of the search (e.g., "rent").
  * @property {string} unitType - The type of unit (e.g., "Apartment").
  * @property {number} price - The price range.
- * @property {number} roomCount - The number of rooms.
+ * @property {number} roomCount - The number of rooms in ascending order.
+ *  @example - here's an example if the client requests for rooms between 1 and 4.
+ *  1,2,3,4
  * @property {number} itemsPerPage - The number of items per page.
  * @property {number} page - The page number.
  */
 interface City24SearchParameters {
   address: {
     cc: 1
-    city: City24CityCodes[]
+    city: number[]
   }
   tsType: "rent"
   unitType: "Apartment"
@@ -117,7 +125,7 @@ interface City24SearchParameters {
     gte: number
     lte: number
   }
-  roomCount?: number
+  roomCount?: any
   itemsPerPage?: number
   page?: number
 }
@@ -275,7 +283,7 @@ interface RendinApiSearchResponse {
  * @property {Object} main_image - Information about the main image of the property.
  *   @property {string} url - The URL of the main image.
  *
- * @property {number} price - The price of the property.
+ * @property {string} price - The price of the property.
  * @property {number} room_count - The number of rooms in the property.
  * @property {propertyArea} property_size - The size of the property.
  *
@@ -289,7 +297,7 @@ interface RendinApiSearchResponse {
  *   main_image: {
  *     url: "mainImage.jpg",
  *   },
- *   price: 500,
+ *   price: "500",
  *   room_count: 2,
  *   property_size: 75.5,
  *   address: {
@@ -298,6 +306,9 @@ interface RendinApiSearchResponse {
  *     street: {
  *       name: "Example Street",
  *     },
+ *     street_name: "Example Street",
+ *     // @example - Põhja-Tallinna linnaosa
+ *     city_name: "Põhja-Tallinna linnaosa",
  *   },
  * };
  */
@@ -305,7 +316,7 @@ interface City24ApiSearchResponse {
   main_image: {
     url: string
   }
-  price: number
+  price: string
   room_count: number
   property_size: propertyArea
   address: {
@@ -315,5 +326,15 @@ interface City24ApiSearchResponse {
       // [name] + " " + [house_number] === propertyTitle
       name: string
     }
+    street_name: string
+    // @example - Põhja-Tallinna linnaosa
+    city_name: string
   }
 }
+
+/**
+ * Represents an array of City24 API search responses.
+ * @interface City24ApiSearchResponseArray
+ * @extends {Array<City24ApiSearchResponse>}
+ */
+interface City24ApiSearchResponseArray extends Array<City24ApiSearchResponse> {}
