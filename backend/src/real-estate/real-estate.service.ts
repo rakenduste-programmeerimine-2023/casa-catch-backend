@@ -1,10 +1,12 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {HttpException, Injectable, Logger} from '@nestjs/common';
 import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-request-data.interface";
 import {RealEstateMapper} from "./real-estate.mapper";
 import {WsRealEstateResponseData} from "../shared/interfaces/ws-real-estate-response-data.interface";
 import {Socket} from "socket.io";
+import {UnsupportedApiException} from "../../dist/shared/exceptions/UnsupportedApiException";
 
 type apiRequestOptions = Kinnisvara24ApiSearchParams | RendinApiSearchParams | City24SearchParameters | string
+type supportedApiTypes = "City24" | "Kinnisvara24" | "Rendin"
 
 /**
  * Service for handling real estate-related operations: API calls, data manipulation and sending the data
@@ -171,8 +173,7 @@ export class RealEstateService {
     try {
       return await fetch(url, options)
     } catch (error) {
-      // TODO Throw HttpException
-      this.logger.error(`There was an error fetching the resource: ${error}`)
+      throw new HttpException(`HTTP fetch request failed, error: ${error}`, 404)
     }
   }
 
@@ -191,7 +192,7 @@ export class RealEstateService {
   private createApiRequest(apiType: "Kinnisvara24", requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams
   private createApiRequest(apiType: "Rendin", requestData: WsRealEstateRequestData): RendinApiSearchParams
   private createApiRequest(apiType: "City24", requestData: WsRealEstateRequestData): string
-  private createApiRequest(apiType: string, requestData: WsRealEstateRequestData): apiRequestOptions {
+  private createApiRequest(apiType: supportedApiTypes, requestData: WsRealEstateRequestData): apiRequestOptions {
     switch (apiType) {
       case 'Kinnisvara24':
         return this.realEstateMapper.kinnisvara24Mapper(requestData)
@@ -200,8 +201,7 @@ export class RealEstateService {
       case 'City24':
         return this.realEstateMapper.city24Mapper(requestData)
       default:
-        // TODO Throw custom exception
-        throw new Error(`Unsupported API type: ${apiType}`)
+        throw new UnsupportedApiException(apiType)
     }
   }
 }
