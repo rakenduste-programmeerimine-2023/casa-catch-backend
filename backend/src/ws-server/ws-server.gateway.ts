@@ -61,16 +61,16 @@ export class WsServerGateway implements OnGatewayConnection, OnGatewayDisconnect
    */
   @SubscribeMessage('real-estate')
   public async handleRealEstateRequest(client: Socket, payload: WsRealEstateRequestData): Promise<void> {
-    // Payload is sent to services
     this.logger.log(`received a request for data: ${JSON.stringify(payload)}, client: ${client.id}`)
     try {
+      // TODO update the request count
       const [kinnisvara24Data, rendinData, city24Data] = await Promise.all([
         this.realEstateService.getDataFromRendin(payload, client),
         this.realEstateService.getDataFromKinnisvara24(payload, client),
         this.realEstateService.getDataFromCity24(payload, client)
       ])
 
-      // String response indicates an error
+      // String response indicates an error, emits back to client
       if (typeof kinnisvara24Data === 'string') client.emit('real-estate-json-data-response', kinnisvara24Data)
       if (typeof rendinData === 'string') client.emit('real-estate-json-data-response', rendinData)
       if (typeof city24Data === 'string') client.emit('real-estate-json-data-response', city24Data)
