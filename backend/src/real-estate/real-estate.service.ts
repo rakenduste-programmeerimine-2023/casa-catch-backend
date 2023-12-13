@@ -3,7 +3,7 @@ import {WsRealEstateRequestData} from "../shared/interfaces/ws-real-estate-reque
 import {RealEstateMapper} from "./real-estate.mapper";
 import {WsRealEstateResponseData} from "../shared/interfaces/ws-real-estate-response-data.interface";
 import {Socket} from "socket.io";
-import {UnsupportedApiException} from "../../dist/shared/exceptions/UnsupportedApiException";
+import {UnsupportedApiTypeException} from "../shared/exceptions/UnsupportedApiTypeException";
 
 type apiRequestOptions = Kinnisvara24ApiSearchParams | RendinApiSearchParams | City24SearchParameters | string
 type supportedApiTypes = "City24" | "Kinnisvara24" | "Rendin"
@@ -187,6 +187,7 @@ export class RealEstateService {
    * @returns {Kinnisvara24ApiSearchParams | RendinApiSearchParams | string} - The API request parameters.
    * @throws {Error} - Throws an error if the API type is not supported.
    * @memberof RealEstateService
+   * @throws UnsupportedApiTypeException
    * @link https://stackoverflow.com/a/43959949
    */
   private createApiRequest(apiType: "Kinnisvara24", requestData: WsRealEstateRequestData): Kinnisvara24ApiSearchParams
@@ -201,7 +202,7 @@ export class RealEstateService {
       case 'City24':
         return this.realEstateMapper.city24Mapper(requestData)
       default:
-        throw new UnsupportedApiException(apiType)
+        throw new UnsupportedApiTypeException(apiType)
     }
   }
 }
